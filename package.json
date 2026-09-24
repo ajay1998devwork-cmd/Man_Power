@@ -1,0 +1,50 @@
+{
+  "name": "super-admin-platform",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "SaaS Platform Super Admin - Tenant and subscription management",
+  "scripts": {
+    "dev": "concurrently \"vite\" \"pnpm --filter super-admin-api start:dev\"",
+    "dev:frontend": "vite",
+    "dev:api": "pnpm --filter super-admin-api start:dev",
+    "dev:all": "concurrently \"vite\" \"pnpm --filter super-admin-api start:dev\"",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@base-ui/react": "^1.8.0",
+    "@hookform/resolvers": "^3.9.0",
+    "@tanstack/react-query": "^5.56.2",
+    "@tanstack/react-router": "^1.58.3",
+    "@tanstack/react-table": "^8.20.5",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "cn": "^0.3.0",
+    "lucide-react": "^1.47.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-hook-form": "^7.53.0",
+    "tailwind-merge": "^3.7.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@tanstack/router-vite-plugin": "^1.58.4",
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer": "^10.4.20",
+    "concurrently": "^8.2.2",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "eslint-plugin-react-refresh": "^0.4.11",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.11",
+    "typescript": "^5.5.4",
+    "vite": "^5.4.5"
+  }
+}

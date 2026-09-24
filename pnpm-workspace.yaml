@@ -1,0 +1,7 @@
+packages:
+  - 'api'
+
+allowBuilds:
+  '@nestjs/core': true
+  argon2: true
+  esbuild: false
