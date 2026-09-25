@@ -1,6 +1,4 @@
-import { Search, Bell, User, LogOut, Settings } from 'lucide-react';
-import { useAuth } from '@/lib/auth';
-import { useNavigate } from '@tanstack/react-router';
+import { Search, Bell, User, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {

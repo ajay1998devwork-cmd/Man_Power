@@ -1,5 +1,4 @@
-import { Link, useNavigate, useRouterState } from '@tanstack/react-router';
-import { useAuth } from '@/lib/auth';
+import { Link, useRouterState } from '@tanstack/react-router';
 import {
   Sidebar,
   SidebarContent,
@@ -20,16 +19,9 @@ const navItems = [
 ];
 
 export function AppSidebar() {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { state, toggleSidebar } = useSidebar();
   const isCollapsed = state === 'collapsed';
-
-  const handleLogout = async () => {
-    await logout();
-    navigate({ to: '/login' });
-  };
 
   return (
     <Sidebar collapsible="icon" className="border-r border-slate-200/80 bg-white text-slate-800 shadow-[4px_0_24px_-20px_rgba(15,23,42,0.35)]">
@@ -102,42 +94,17 @@ export function AppSidebar() {
 
       <SidebarFooter className="border-t border-slate-100 p-3">
         <div className="space-y-3">
-          {!isCollapsed ? (
-            <div className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl bg-white border border-slate-100 shadow-sm">
-              <div className="h-9 w-9 shrink-0 rounded-full bg-brand/10 border border-brand/20 flex items-center justify-center">
-                <span className="text-brand text-sm font-bold uppercase">
-                  {user?.email?.substring(0, 2) || 'SA'}
-                </span>
-              </div>
-              <div className="flex flex-col overflow-hidden flex-1 min-w-0">
-                <span className="text-sm font-semibold text-slate-800 truncate leading-tight">
-                  {user?.email?.split('@')[0] || 'Super Admin'}
-                </span>
-                <span className="text-xs text-slate-500 truncate">{user?.email || 'admin@manpower.com'}</span>
-              </div>
+          <div className={`flex items-center gap-2.5 rounded-xl border border-slate-100 bg-slate-50/80 px-2.5 py-2 shadow-sm ${isCollapsed ? 'justify-center px-0' : ''}`}>
+            <div className="flex size-9 shrink-0 items-center justify-center rounded-full border border-brand/20 bg-brand/10">
+              <span className="text-sm font-bold uppercase text-brand">MP</span>
             </div>
-          ) : (
-            <div className="flex items-center justify-center">
-              <div className="h-10 w-10 rounded-full bg-brand/10 border border-brand/20 flex items-center justify-center">
-                <span className="text-brand text-sm font-bold uppercase">
-                  {user?.email?.substring(0, 2) || 'SA'}
-                </span>
+            {!isCollapsed && (
+              <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+                <span className="truncate text-sm font-semibold leading-tight text-slate-800">Manpower Admin</span>
+                <span className="truncate text-xs text-slate-500">Workspace owner</span>
               </div>
-            </div>
-          )}
-
-          <button
-            onClick={handleLogout}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:text-red-600 hover:bg-red-50 transition-colors font-medium group ${
-              isCollapsed ? 'justify-center' : ''
-            }`}
-            title={isCollapsed ? 'Logout' : undefined}
-          >
-            <span className={`material-symbols-outlined shrink-0 ${
-              isCollapsed ? 'text-2xl' : 'text-xl'
-            }`}>logout</span>
-            {!isCollapsed && <span className="text-sm">Logout</span>}
-          </button>
+            )}
+          </div>
         </div>
       </SidebarFooter>
       <SidebarRail />
