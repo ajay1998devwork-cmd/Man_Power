@@ -89,7 +89,7 @@ function CreateTenantPage() {
             </div>
           </div>
 
-          <div className="p-5 bg-orange-500/10 border border-orange-500/30 rounded-DEFAULT">
+          <div className="p-5 bg-blue-50 border border-blue-200 rounded-DEFAULT">
             <p className="text-body-md font-body-md text-secondary-container font-semibold flex items-center gap-2">
               <span className="material-symbols-outlined">warning</span>
               Save these credentials securely. The temporary password will not be shown again.

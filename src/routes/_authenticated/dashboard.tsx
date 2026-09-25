@@ -32,7 +32,7 @@ function DashboardPage() {
           <p className="text-sm text-slate-500 mt-1 max-w-2xl">Manage and monitor your manpower agencies across all nationwide operational nodes.</p>
         </div>
         <Link to="/tenants/new">
-          <button className="h-10 px-5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold flex items-center gap-2 transition shadow-sm shadow-orange-500/25">
+          <button className="h-10 px-5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold flex items-center gap-2 transition shadow-sm shadow-blue-600/25">
             <span className="material-symbols-outlined text-base font-bold">add</span>
             <span>+ Create Agency</span>
           </button>

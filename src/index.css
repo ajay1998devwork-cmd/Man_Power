@@ -15,8 +15,9 @@ html, body { height: 100%; }
   --brand-navy: 15 42 74;
   --brand-navy-dark: 10 31 56;
   --brand-navy-light: 234 241 248;
-  --brand-orange: 249 115 22;
-  --brand-orange-dark: 234 88 12;
+  --brand-blue: 37 99 235;
+  --brand-blue-dark: 29 78 216;
+  --brand-blue-light: 239 246 255;
   --app-background: 248 250 252;
   --app-border: 226 232 240;
 }
@@ -38,15 +39,15 @@ body {
   .page-title { @apply font-display text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl; }
   .page-subtitle { @apply mt-1 text-sm text-slate-500; }
   .surface-card { @apply rounded-xl border border-slate-200 bg-white shadow-sm; }
-  .form-control { @apply h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/15; }
+  .form-control { @apply h-10 w-full rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/15; }
 }
 
 @layer utilities {
   .font-display { font-family: 'Plus Jakarta Sans', Inter, sans-serif; }
   .bg-brand { background-color: rgb(var(--brand-navy)); }
   .text-brand { color: rgb(var(--brand-navy)); }
-  .bg-accent { background-color: rgb(var(--brand-orange)); }
-  .text-accent { color: rgb(var(--brand-orange)); }
+  .bg-accent { background-color: rgb(var(--brand-blue)); }
+  .text-accent { color: rgb(var(--brand-blue)); }
 }
 
 /* Custom scrollbar */

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode, useCallback, useRef } from 'react';
+import { createContext, useContext, useState, ReactNode } from 'react';
 import { apiClient } from './api-client';
 import { SuperAdminUser } from './types';
 
@@ -14,26 +14,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<SuperAdminUser | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const hasFetched = useRef(false);
-
-  const fetchUser = useCallback(async () => {
-    try {
-      const userData = await apiClient.get<SuperAdminUser>('/auth/me');
-      setUser(userData);
-    } catch {
-      setUser(null);
-    } finally {
-      setIsLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!hasFetched.current) {
-      hasFetched.current = true;
-      fetchUser();
-    }
-  }, [fetchUser]);
+  const isLoading = false;
 
   const login = async (email: string, password: string) => {
     const userData = await apiClient.post<SuperAdminUser>('/auth/login', {
@@ -49,7 +30,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const refetch = async () => {
-    await fetchUser();
+    // Authentication is intentionally disabled while all routes are public.
   };
 
   return (

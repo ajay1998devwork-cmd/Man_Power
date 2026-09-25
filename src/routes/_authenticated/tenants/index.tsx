@@ -19,8 +19,8 @@ function TenantsListPage() {
   const getStatusBadge = (status: string) => {
     const styles = {
       ACTIVE: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30',
-      PENDING: 'bg-orange-500/10 text-orange-400 border border-orange-500/30',
-      SUSPENDED: 'bg-orange-500/10 text-orange-400 border border-orange-500/30',
+      PENDING: 'bg-blue-50 text-blue-700 border border-blue-200',
+      SUSPENDED: 'bg-blue-50 text-blue-700 border border-blue-200',
       INACTIVE: 'bg-slate-500/10 text-slate-400 border border-slate-500/30',
     };
     return (
