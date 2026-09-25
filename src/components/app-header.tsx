@@ -23,16 +23,20 @@ export function AppHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b border-slate-200 bg-white/95 px-4 backdrop-blur md:px-6">
-      <SidebarTrigger className="md:hidden" />
-      
-      <div className="flex flex-1 items-center gap-4">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+    <header className="sticky top-0 z-10 flex min-h-16 items-center gap-4 border-b border-slate-200/80 bg-white/95 px-4 backdrop-blur md:px-7">
+      <SidebarTrigger className="rounded-lg text-slate-500 hover:bg-slate-100 hover:text-brand md:hidden" />
+      <div className="hidden items-center gap-2 text-sm text-slate-400 md:flex">
+        <span className="font-medium">Workspace</span>
+        <span className="text-slate-300">/</span>
+        <span className="font-semibold text-slate-800">Overview</span>
+      </div>
+      <div className="flex flex-1 items-center justify-end gap-3">
+        <div className="relative hidden w-full max-w-xs lg:block">
+          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
           <Input
             type="search"
-            placeholder="Search..."
-            className="w-full pl-9 pr-4 h-10 bg-slate-50 border-slate-200 focus:bg-white"
+            placeholder="Search anything..."
+            className="h-10 w-full rounded-xl border-slate-200 bg-slate-50/80 pl-9 pr-4 text-sm transition-colors hover:border-slate-300 focus:bg-white"
           />
         </div>
       </div>

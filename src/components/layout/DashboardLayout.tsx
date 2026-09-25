@@ -14,8 +14,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         <AppSidebar />
         <SidebarInset className="flex flex-col overflow-hidden">
           <AppHeader />
-          <main className="flex flex-1 flex-col gap-6 bg-[#f8fafc] overflow-y-auto">
-            {children}
+          <main className="flex flex-1 flex-col overflow-y-auto bg-[#f8fafc]">
+            <div className="mx-auto flex w-full max-w-[1600px] flex-1 flex-col gap-6 p-4 md:p-6 lg:p-8">
+              {children}
+            </div>
           </main>
         </SidebarInset>
       </SidebarProvider>
