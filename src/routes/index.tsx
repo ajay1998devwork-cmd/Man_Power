@@ -2,13 +2,17 @@ import { createFileRoute, redirect } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/')({
   beforeLoad: async () => {
-    const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/auth/me`, {
-      credentials: 'include',
-    });
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8080'}/auth/me`, {
+        credentials: 'include',
+      });
 
-    if (response.ok) {
-      throw redirect({ to: '/dashboard' });
-    } else {
+      throw redirect({ to: response.ok ? '/dashboard' : '/login' });
+    } catch (error) {
+      if (error instanceof Response) {
+        throw error;
+      }
+
       throw redirect({ to: '/login' });
     }
   },
