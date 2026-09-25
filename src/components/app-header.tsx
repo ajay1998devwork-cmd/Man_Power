@@ -23,7 +23,7 @@ export function AppHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b border-slate-200 bg-white px-4 md:px-6">
+    <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b border-slate-200 bg-white/95 px-4 backdrop-blur md:px-6">
       <SidebarTrigger className="md:hidden" />
       
       <div className="flex flex-1 items-center gap-4">
@@ -39,7 +39,7 @@ export function AppHeader() {
 
       <div className="flex items-center gap-2">
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+          <DropdownMenuTrigger>
             <Button variant="ghost" size="icon" className="relative">
               <Bell className="h-5 w-5 text-slate-600" />
               <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-accent"></span>
@@ -56,7 +56,7 @@ export function AppHeader() {
         </DropdownMenu>
 
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
+          <DropdownMenuTrigger>
             <Button variant="ghost" size="icon" className="rounded-full">
               <div className="h-8 w-8 rounded-full bg-brand/10 border border-brand/20 flex items-center justify-center">
                 <span className="text-brand text-xs font-bold uppercase">

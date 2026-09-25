@@ -9,7 +9,6 @@ import {
   SidebarHeader,
   SidebarMenu,
   SidebarMenuItem,
-  SidebarTrigger,
   useSidebar,
 } from '@/components/ui/sidebar';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
