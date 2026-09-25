@@ -9,6 +9,7 @@ import {
   SidebarHeader,
   SidebarMenu,
   SidebarMenuItem,
+  SidebarRail,
   useSidebar,
 } from '@/components/ui/sidebar';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -46,7 +47,9 @@ export function AppSidebar() {
           <button
             onClick={toggleSidebar}
             className="hidden md:flex h-7 w-7 items-center justify-center rounded-md hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition-colors shrink-0 group-data-[collapsible=icon]:hidden"
-            aria-label="Toggle Sidebar"
+            aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            aria-expanded={!isCollapsed}
+            title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             {isCollapsed ? (
               <ChevronRight className="h-4 w-4" />
@@ -134,6 +137,7 @@ export function AppSidebar() {
           </button>
         </div>
       </SidebarFooter>
+      <SidebarRail />
     </Sidebar>
   );
 }
