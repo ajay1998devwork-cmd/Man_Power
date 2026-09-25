@@ -1,24 +1,16 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { useQuery } from '@tanstack/react-query';
-import { tenantsApi } from '@/lib/api/tenants';
 
 export const Route = createFileRoute('/_authenticated/dashboard')({
   component: DashboardPage,
 });
 
 function DashboardPage() {
-  const { data: stats, isLoading } = useQuery({
-    queryKey: ['dashboard-stats'],
-    queryFn: () => tenantsApi.getDashboardStats(),
-  });
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="text-slate-600 text-sm">Loading dashboard...</div>
-      </div>
-    );
-  }
+  const stats = {
+    totalAgencies: 0,
+    activeAgencies: 0,
+    suspendedAgencies: 0,
+    inactiveAgencies: 0,
+  };
 
   return (
     <section className="page-container flex flex-col gap-6">
