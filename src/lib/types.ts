@@ -7,6 +7,7 @@ export interface SuperAdminUser {
 
 export interface Tenant {
   id: string;
+  agencyCode: string;
   name: string;
   slug: string;
   contactPersonName: string;

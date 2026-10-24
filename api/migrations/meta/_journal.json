@@ -1,0 +1,62 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1789915357965,
+      "tag": "0000_sticky_wendell_rand",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790415717747,
+      "tag": "0001_add_agency_code",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1790426103802,
+      "tag": "0002_good_scrambler",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1790448273209,
+      "tag": "0003_omniscient_avengers",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1790707714904,
+      "tag": "0004_gray_mephisto",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1792097852592,
+      "tag": "0005_acoustic_human_torch",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1792098799684,
+      "tag": "0006_clumsy_sinister_six",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1792830728941,
+      "tag": "0007_premium_komodo",
+      "breakpoints": true
+    }
+  ]
+}

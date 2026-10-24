@@ -23,28 +23,31 @@ export function AppHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b border-slate-200 bg-white px-4 md:px-6">
-      <SidebarTrigger className="md:hidden" />
-      
-      <div className="flex flex-1 items-center gap-4">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+    <header className="sticky top-0 z-10 flex h-[72px] shrink-0 items-center gap-4 border-b border-slate-200/80 bg-white/95 px-4 backdrop-blur md:px-7">
+      <SidebarTrigger className="size-9 rounded-lg border border-slate-200 bg-white text-slate-600 shadow-sm hover:bg-slate-50 hover:text-brand" />
+      <div className="hidden h-6 w-px bg-slate-200 sm:block" />
+
+      <div className="flex min-w-0 flex-1 items-center gap-4">
+        <div className="hidden min-w-0 md:block">
+          <p className="truncate text-sm font-semibold text-brand">Super admin workspace</p>
+          <p className="text-xs text-slate-500">Manage your platform from one place</p>
+        </div>
+        <div className="relative ml-auto w-full max-w-xs">
+          <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
           <Input
             type="search"
-            placeholder="Search..."
-            className="w-full pl-9 pr-4 h-10 bg-slate-50 border-slate-200 focus:bg-white"
+            placeholder="Search workspace"
+            className="h-10 w-full border-slate-200 bg-slate-50 pl-9 pr-4 text-xs focus:bg-white"
           />
         </div>
       </div>
 
       <div className="flex items-center gap-2">
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="relative">
-              <Bell className="h-5 w-5 text-slate-600" />
-              <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-accent"></span>
-              <span className="sr-only">Notifications</span>
-            </Button>
+          <DropdownMenuTrigger render={<Button variant="ghost" size="icon" className="relative" />}>
+            <Bell className="h-5 w-5 text-slate-600" />
+            <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-accent"></span>
+            <span className="sr-only">Notifications</span>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-80">
             <DropdownMenuLabel className="font-semibold">Notifications</DropdownMenuLabel>
@@ -56,15 +59,13 @@ export function AppHeader() {
         </DropdownMenu>
 
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon" className="rounded-full">
+          <DropdownMenuTrigger render={<Button variant="ghost" size="icon" className="rounded-full" />}>
               <div className="h-8 w-8 rounded-full bg-brand/10 border border-brand/20 flex items-center justify-center">
                 <span className="text-brand text-xs font-bold uppercase">
                   {user?.email?.substring(0, 2) || 'SA'}
                 </span>
               </div>
               <span className="sr-only">User menu</span>
-            </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel>

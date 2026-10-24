@@ -1,207 +1,42 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { ArrowRight, Building2, CheckCircle2, ChevronLeft, ChevronRight, Eye, Filter, MapPin, Plus, Search, ShieldAlert, Users, XCircle } from 'lucide-react';
 import { tenantsApi } from '@/lib/api/tenants';
+import type { Tenant } from '@/lib/types';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
-export const Route = createFileRoute('/_authenticated/tenants/')({
-  component: TenantsListPage,
-});
+export const Route = createFileRoute('/_authenticated/tenants/')({ component: TenantsListPage });
+
+const statusStyles = { ACTIVE: 'bg-emerald-50 text-emerald-700 ring-emerald-600/10', PENDING: 'bg-blue-50 text-blue-700 ring-blue-600/10', SUSPENDED: 'bg-amber-50 text-amber-700 ring-amber-600/10', INACTIVE: 'bg-slate-100 text-slate-600 ring-slate-500/10' } as const;
 
 function TenantsListPage() {
-  const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
+  const [status, setStatus] = useState('ALL');
+  const { data, isLoading } = useQuery({ queryKey: ['tenants', 1, search], queryFn: () => tenantsApi.getAll(1, 50, search) });
+  const allAgencies = data?.data || [];
+  const agencies = useMemo(() => allAgencies.filter((agency) => {
+    const matchesSearch = `${agency.name} ${agency.email} ${agency.city} ${agency.state} ${agency.contactPersonName}`.toLowerCase().includes(search.toLowerCase());
+    return matchesSearch && (status === 'ALL' || agency.status === status);
+  }), [allAgencies, search, status]);
+  const counts = { total: allAgencies.length, active: allAgencies.filter((a) => a.status === 'ACTIVE').length, pending: allAgencies.filter((a) => a.status === 'PENDING').length, attention: allAgencies.filter((a) => a.status === 'SUSPENDED').length };
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['tenants', page, search],
-    queryFn: () => tenantsApi.getAll(page, 20, search),
-  });
+  return <section className="w-full space-y-6 p-5 md:p-8 xl:p-10">
+    <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end"><div><div className="mb-2 flex items-center gap-3"><h1 className="text-xl font-bold tracking-tight text-brand md:text-2xl">Agencies</h1><span className="rounded-full bg-blue-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-blue-700">Directory</span></div><p className="text-sm text-slate-500">Manage your manpower partners, access, and operational status.</p></div><Link to="/tenants/new"><Button className="h-10 gap-2 bg-accent text-xs font-bold text-white hover:bg-accent-hover"><Plus className="size-4" /> Create agency</Button></Link></div>
 
-  const getStatusBadge = (status: string) => {
-    const styles = {
-      ACTIVE: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30',
-      PENDING: 'bg-orange-500/10 text-orange-400 border border-orange-500/30',
-      SUSPENDED: 'bg-orange-500/10 text-orange-400 border border-orange-500/30',
-      INACTIVE: 'bg-slate-500/10 text-slate-400 border border-slate-500/30',
-    };
-    return (
-      <span className={`h-[22px] px-2 py-0.5 rounded-DEFAULT text-[0.6875rem] font-mono uppercase tracking-wider font-semibold inline-block ${styles[status as keyof typeof styles]}`}>
-        {status}
-      </span>
-    );
-  };
+    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4"><Summary icon={Building2} label="Total agencies" value={counts.total} className="bg-violet-50 text-violet-600" /><Summary icon={CheckCircle2} label="Active" value={counts.active} className="bg-emerald-50 text-emerald-600" /><Summary icon={ShieldAlert} label="Pending review" value={counts.pending} className="bg-blue-50 text-blue-600" /><Summary icon={XCircle} label="Needs attention" value={counts.attention} className="bg-amber-50 text-amber-600" /></div>
 
-  return (
-    <section className="p-4 md:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-outline-variant pb-5">
-        <div>
-          <h1 className="text-headline-lg font-headline-lg text-on-surface tracking-tight">Agencies Directory</h1>
-          <p className="text-body-md font-body-md text-on-surface-variant mt-1">Full registry of credentialed manpower partners, SLAs, and placement pipelines.</p>
-        </div>
-        <Link to="/tenants/new">
-          <button className="h-9 px-4 rounded-DEFAULT bg-secondary-container text-surface-container-lowest font-label-lg font-semibold flex items-center gap-2 hover:bg-[#ea580c] transition-all shadow-sm shadow-secondary-container/20">
-            <span className="material-symbols-outlined text-base font-bold">add</span>
-            <span>+ Create Agency</span>
-          </button>
-        </Link>
-      </div>
+    <Card className="border-0 bg-white shadow-card"><CardContent className="space-y-4 p-5"><div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between"><div className="relative w-full lg:max-w-md"><Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" /><Input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search by name, code, contact or city" className="h-10 border-slate-200 pl-9 text-sm shadow-none focus-visible:border-accent focus-visible:ring-orange-100" /></div><div className="flex items-center gap-2"><Filter className="size-4 text-slate-400" /><select value={status} onChange={(event) => setStatus(event.target.value)} className="h-10 rounded-lg border border-slate-200 bg-white px-3 text-sm text-slate-600 outline-none focus:border-accent"><option value="ALL">All statuses</option><option value="ACTIVE">Active</option><option value="PENDING">Pending</option><option value="SUSPENDED">Suspended</option><option value="INACTIVE">Inactive</option></select></div></div><div className="border-t border-slate-100 pt-4 text-xs text-slate-500">{agencies.length} agencies shown</div></CardContent></Card>
 
-      {/* Filter & Search Controls Bar */}
-      <div className="p-4 bg-surface-container rounded-DEFAULT border border-outline-variant space-y-3">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
-          {/* Search bar */}
-          <div className="md:col-span-12 relative">
-            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-lg">search</span>
-            <input
-              className="w-full h-[38px] pl-9 pr-4 text-body-sm font-body-sm bg-surface-container-lowest border border-outline-variant rounded-DEFAULT text-on-surface placeholder:text-outline focus:border-secondary-container focus:ring-1 focus:ring-secondary-container"
-              placeholder="Search agencies by name, email, code..."
-              type="text"
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setPage(1);
-              }}
-            />
-          </div>
-        </div>
-        {/* Result Count Meta */}
-        <div className="flex items-center justify-between pt-1 border-t border-outline-variant/60 text-label-sm font-label-sm text-outline">
-          <span className="font-mono text-tertiary">
-            {data ? `Showing ${data.data.length} agencies` : 'Loading...'}
-          </span>
-          {data && data.pagination.totalPages > 1 && (
-            <span className="font-mono">Page {data.pagination.page} of {data.pagination.totalPages}</span>
-          )}
-        </div>
-      </div>
-
-      {/* Data Table */}
-      <div className="bg-surface-container rounded-DEFAULT border border-outline-variant overflow-hidden">
-        <div className="px-5 py-3.5 border-b border-outline-variant flex items-center justify-between bg-surface-container-low">
-          <div className="flex items-center gap-2.5">
-            <span className="material-symbols-outlined text-tertiary text-base">table_chart</span>
-            <h2 className="text-headline-sm font-headline-sm text-on-surface font-semibold">Recent Agencies Monitored</h2>
-          </div>
-          <span className="text-label-sm font-label-sm text-outline font-mono">
-            {data ? `${data.pagination.total} total units` : ''}
-          </span>
-        </div>
-        
-        {isLoading ? (
-          <div className="text-center py-16 text-on-surface-variant text-body-md font-body-md">Loading agencies...</div>
-        ) : !data?.data.length ? (
-          <div className="p-8 rounded-DEFAULT bg-surface-container-low border border-dashed border-outline text-center space-y-3">
-            <div className="w-12 h-12 rounded-DEFAULT bg-primary-container text-secondary-container mx-auto flex items-center justify-center">
-              <span className="material-symbols-outlined text-2xl">folder_open</span>
-            </div>
-            <h2 className="text-headline-md font-headline-md text-on-surface">No agencies yet</h2>
-            <p className="text-body-md font-body-md text-outline max-w-md mx-auto">Create your first manpower agency to get started with credentialing, deployment tracking, and regional node allocation.</p>
-            <Link to="/tenants/new">
-              <button className="mt-2 h-9 px-4 rounded-DEFAULT bg-secondary-container text-surface-container-lowest font-label-lg font-semibold inline-flex items-center gap-2">
-                <span className="material-symbols-outlined text-sm">add</span> Create Agency Now
-              </button>
-            </Link>
-          </div>
-        ) : (
-          <>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="h-9 bg-[#091B33] text-outline text-[0.6875rem] uppercase font-mono tracking-wider border-b border-outline-variant">
-                    <th className="px-5 font-semibold">Agency & Code</th>
-                    <th className="px-4 font-semibold hidden md:table-cell">Primary Contact</th>
-                    <th className="px-4 font-semibold">Location</th>
-                    <th className="px-4 font-semibold">Status</th>
-                    <th className="px-4 font-semibold hidden lg:table-cell">Created</th>
-                    <th className="px-5 text-right font-semibold">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-outline-variant/40 text-body-sm font-body-sm">
-                  {data.data.map((tenant, index) => (
-                    <tr key={tenant.id} className={`h-12 ${index % 2 === 0 ? 'bg-surface-container' : 'bg-surface-container-low'} hover:bg-[#12335C] transition-colors`}>
-                      <td className="px-5">
-                        <div className="flex items-center gap-2.5">
-                          <div className="w-7 h-7 rounded-DEFAULT bg-primary-container text-secondary flex items-center justify-center font-bold text-xs">
-                            {tenant.name.substring(0, 2).toUpperCase()}
-                          </div>
-                          <div>
-                            <Link to="/tenants/$tenantId" params={{ tenantId: tenant.id }}>
-                              <div className="font-medium text-on-surface hover:text-secondary-container cursor-pointer">{tenant.name}</div>
-                            </Link>
-                            <div className="text-[0.625rem] text-outline font-mono">ID: {tenant.id.substring(0, 12)}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-4 text-on-surface-variant hidden md:table-cell">
-                        <div>{tenant.contactPersonName}</div>
-                        <div className="text-[0.625rem] text-outline">{tenant.email}</div>
-                      </td>
-                      <td className="px-4">
-                        <span className="inline-flex items-center gap-1 text-on-surface font-medium">
-                          <span className="material-symbols-outlined text-xs text-outline">location_on</span>
-                          {tenant.city}, {tenant.state}
-                        </span>
-                      </td>
-                      <td className="px-4">{getStatusBadge(tenant.status)}</td>
-                      <td className="px-4 text-on-surface-variant hidden lg:table-cell">
-                        {new Date(tenant.createdAt).toLocaleDateString()}
-                      </td>
-                      <td className="px-5 text-right">
-                        <Link to="/tenants/$tenantId" params={{ tenantId: tenant.id }}>
-                          <button className="p-1 rounded-DEFAULT text-on-surface-variant hover:text-secondary-container hover:bg-surface-container-high transition-colors" title="Inspect Agency">
-                            <span className="material-symbols-outlined text-base">visibility</span>
-                          </button>
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Pagination Controls */}
-            {data.pagination.totalPages > 1 && (
-              <div className="flex items-center justify-between p-4 bg-surface-container rounded-DEFAULT border-t border-outline-variant">
-                <div className="text-body-sm font-body-sm text-outline">
-                  Showing <span className="text-on-surface font-semibold">{((page - 1) * 20) + 1} to {Math.min(page * 20, data.pagination.total)}</span> of {data.pagination.total} agencies
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <button
-                    className="h-8 px-2.5 rounded-DEFAULT bg-surface-container-low border border-outline-variant text-outline hover:text-on-surface text-label-sm font-label-sm disabled:opacity-40"
-                    disabled={page === 1}
-                    onClick={() => setPage(page - 1)}
-                  >
-                    Previous
-                  </button>
-                  {Array.from({ length: Math.min(5, data.pagination.totalPages) }, (_, i) => {
-                    const pageNum = i + 1;
-                    return (
-                      <button
-                        key={pageNum}
-                        className={`h-8 w-8 rounded-DEFAULT text-label-sm font-label-sm ${
-                          page === pageNum
-                            ? 'bg-secondary-container text-surface-container-lowest font-bold'
-                            : 'bg-surface-container-low border border-outline-variant text-on-surface hover:bg-surface-container-high'
-                        }`}
-                        onClick={() => setPage(pageNum)}
-                      >
-                        {pageNum}
-                      </button>
-                    );
-                  })}
-                  <button
-                    className="h-8 px-2.5 rounded-DEFAULT bg-surface-container-low border border-outline-variant text-on-surface hover:bg-surface-container-high text-label-sm font-label-sm disabled:opacity-40"
-                    disabled={page === data.pagination.totalPages}
-                    onClick={() => setPage(page + 1)}
-                  >
-                    Next
-                  </button>
-                </div>
-              </div>
-            )}
-          </>
-        )}
-      </div>
-    </section>
-  );
+    <Card className="overflow-hidden border-0 bg-white shadow-card"><div className="flex items-center justify-between border-b border-slate-100 px-5 py-4"><div><h2 className="text-base font-bold text-brand">Agency list</h2><p className="mt-1 text-xs text-slate-500">Review agency codes, contact details, and current access status.</p></div><Users className="size-5 text-slate-300" /></div>{isLoading ? <div className="p-12 text-center text-sm text-slate-400">Loading agencies…</div> : agencies.length === 0 ? <div className="p-12 text-center"><Building2 className="mx-auto size-9 text-slate-300" /><p className="mt-3 text-sm font-semibold text-slate-600">No agencies found</p><p className="mt-1 text-xs text-slate-400">Create your first agency to see it in this directory.</p><Link to="/tenants/new"><Button className="mt-4 gap-2 bg-accent text-xs text-white hover:bg-accent-hover"><Plus className="size-4" /> Create agency</Button></Link></div> : <><div className="hidden overflow-x-auto md:block"><table className="w-full text-left"><thead className="bg-slate-50 text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400"><tr><th className="px-5 py-3">Agency & code</th><th className="px-4 py-3">Primary contact</th><th className="px-4 py-3">Location</th><th className="px-4 py-3">Status</th><th className="px-5 py-3 text-right">Action</th></tr></thead><tbody className="divide-y divide-slate-100">{agencies.map((agency) => <AgencyRow key={agency.id} agency={agency} />)}</tbody></table></div><div className="divide-y divide-slate-100 md:hidden">{agencies.map((agency) => <AgencyMobileCard key={agency.id} agency={agency} />)}</div></>}</Card>
+    <div className="flex items-center justify-between text-xs text-slate-400"><span>Showing {agencies.length} of {allAgencies.length} agencies</span><div className="flex gap-2"><Button variant="outline" size="sm" disabled className="gap-1 border-slate-200"><ChevronLeft className="size-3.5" /> Previous</Button><Button variant="outline" size="sm" disabled className="gap-1 border-slate-200">Next <ChevronRight className="size-3.5" /></Button></div></div>
+  </section>;
 }
+
+function Summary({ icon: Icon, label, value, className }: { icon: typeof Building2; label: string; value: number; className: string }) { return <Card className="border-0 bg-white shadow-card"><CardContent className="flex items-center gap-4 p-5"><div className={`flex size-10 items-center justify-center rounded-xl ${className}`}><Icon className="size-5" /></div><div><p className="text-2xl font-bold tracking-tight text-brand">{value}</p><p className="text-xs font-medium text-slate-500">{label}</p></div></CardContent></Card>; }
+
+function StatusBadge({ status }: { status: Tenant['status'] }) { return <span className={`inline-flex rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide ring-1 ring-inset ${statusStyles[status]}`}>{status}</span>; }
+function AgencyRow({ agency }: { agency: Tenant }) { return <tr className="transition-colors hover:bg-slate-50"><td className="px-5 py-4"><div className="flex items-center gap-3"><div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-orange-50 text-xs font-bold text-accent">{agency.name.slice(0, 2).toUpperCase()}</div><div className="min-w-0"><p className="truncate text-sm font-semibold text-brand">{agency.name}</p><p className="font-mono text-[11px] font-semibold text-accent">{agency.agencyCode}</p></div></div></td><td className="px-4 py-4"><p className="text-sm font-medium text-slate-700">{agency.contactPersonName}</p><p className="text-xs text-slate-400">{agency.email}</p></td><td className="px-4 py-4"><span className="flex items-center gap-1.5 text-sm text-slate-600"><MapPin className="size-3.5 text-slate-400" />{agency.city}, {agency.state}</span></td><td className="px-4 py-4"><StatusBadge status={agency.status} /></td><td className="px-5 py-4 text-right"><Link to="/tenants/$tenantId" params={{ tenantId: agency.id }}><Button variant="ghost" size="sm" className="gap-1.5 text-xs text-brand"><Eye className="size-3.5" /> View</Button></Link></td></tr>; }
+function AgencyMobileCard({ agency }: { agency: Tenant }) { return <div className="p-4"><div className="flex items-start justify-between gap-3"><div className="flex min-w-0 items-center gap-3"><div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-orange-50 text-xs font-bold text-accent">{agency.name.slice(0, 2).toUpperCase()}</div><div className="min-w-0"><p className="truncate text-sm font-semibold text-brand">{agency.name}</p><p className="font-mono text-[11px] font-semibold text-accent">{agency.agencyCode}</p></div></div><StatusBadge status={agency.status} /></div><div className="mt-3 flex items-center justify-between text-xs text-slate-500"><span className="flex items-center gap-1"><MapPin className="size-3.5" />{agency.city}, {agency.state}</span><Link to="/tenants/$tenantId" params={{ tenantId: agency.id }} className="flex items-center gap-1 font-semibold text-accent">View <ArrowRight className="size-3" /></Link></div></div>; }

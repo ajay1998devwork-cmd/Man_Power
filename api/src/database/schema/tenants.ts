@@ -4,6 +4,7 @@ export const tenantStatusEnum = pgEnum('tenant_status', ['PENDING', 'ACTIVE', 'S
 
 export const tenants = pgTable('tenants', {
   id: uuid('id').defaultRandom().primaryKey(),
+  agencyCode: varchar('agency_code', { length: 32 }).notNull().unique(),
   name: varchar('name', { length: 255 }).notNull(),
   slug: varchar('slug', { length: 255 }).notNull().unique(),
   contactPersonName: varchar('contact_person_name', { length: 255 }).notNull(),

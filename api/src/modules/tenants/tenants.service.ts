@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { eq, ilike, or, desc, asc, count } from 'drizzle-orm';
+import { eq, ilike, like, or, desc, count } from 'drizzle-orm';
 import { db } from '../../database/db';
 import { tenants, tenantAccounts, tenantDocuments } from '../../database/schema';
 import { CreateTenantDto } from './dto/create-tenant.dto';
@@ -19,6 +19,7 @@ export class TenantsService {
   async create(createTenantDto: CreateTenantDto, userId: string) {
     const slug = SlugUtil.generate(createTenantDto.name);
     const username = SlugUtil.generateUsername(createTenantDto.name);
+    const agencyCode = await this.generateAgencyCode(createTenantDto.name);
 
     const existingSlug = await db.query.tenants.findFirst({
       where: eq(tenants.slug, slug),
@@ -45,6 +46,7 @@ export class TenantsService {
     try {
       const [newTenant] = await db.insert(tenants).values({
         ...createTenantDto,
+        agencyCode,
         slug,
         status: 'ACTIVE',
       }).returning();
@@ -67,7 +69,7 @@ export class TenantsService {
         action: 'TENANT_CREATED',
         entityType: 'TENANT',
         entityId: tenant.id,
-        metadata: { tenantName: tenant.name },
+        metadata: { tenantName: tenant.name, agencyCode: tenant.agencyCode },
       });
 
       await this.auditService.log({
@@ -97,6 +99,7 @@ export class TenantsService {
     const whereCondition = search
       ? or(
           ilike(tenants.name, `%${search}%`),
+          ilike(tenants.agencyCode, `%${search}%`),
           ilike(tenants.contactPersonName, `%${search}%`),
           ilike(tenants.email, `%${search}%`),
           ilike(tenants.mobile, `%${search}%`)
@@ -124,6 +127,37 @@ export class TenantsService {
         totalPages: Math.ceil(totalResult.count / limit),
       },
     };
+  }
+
+  /**
+   * Generates a readable, stable code such as AFS2026001.
+   * The prefix uses initials for multi-word names and the first four
+   * characters for single-word names, followed by the current year and a
+   * three-digit sequence for that prefix/year combination.
+   */
+  private async generateAgencyCode(name: string): Promise<string> {
+    const words = name.toUpperCase().replace(/[^A-Z0-9]+/g, ' ').trim().split(/\s+/).filter(Boolean);
+    const prefix = (words.length > 1
+      ? words.map((word) => word[0]).join('')
+      : (words[0] || 'AGENCY').slice(0, 4))
+      .slice(0, 6)
+      .padEnd(3, 'X');
+    const year = new Date().getFullYear();
+    const codePrefix = `${prefix}${year}`;
+    const existingCodes = await db
+      .select({ agencyCode: tenants.agencyCode })
+      .from(tenants)
+      .where(like(tenants.agencyCode, `${codePrefix}%`));
+
+    const usedSequences = new Set(
+      existingCodes
+        .map(({ agencyCode: code }) => Number(code.slice(codePrefix.length)))
+        .filter((sequence) => Number.isInteger(sequence) && sequence > 0),
+    );
+
+    let sequence = 1;
+    while (usedSequences.has(sequence)) sequence += 1;
+    return `${codePrefix}${String(sequence).padStart(3, '0')}`;
   }
 
   async findOne(id: string) {

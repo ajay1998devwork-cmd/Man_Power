@@ -36,6 +36,26 @@ body {
   min-height: 100vh;
 }
 
+/* The sidebar primitive uses CSS variables for its desktop widths. Keep the
+   layout spacer explicit so the fixed sidebar never covers the app content. */
+@media (min-width: 768px) {
+  [data-slot='sidebar-gap'] {
+    width: var(--sidebar-width);
+    flex-shrink: 0;
+    transition: width 200ms ease-linear;
+  }
+
+  [data-slot='sidebar-container'] {
+    width: var(--sidebar-width);
+    transition: width 200ms ease-linear, left 200ms ease-linear, right 200ms ease-linear;
+  }
+
+  [data-slot='sidebar'][data-collapsible='icon'] [data-slot='sidebar-gap'],
+  [data-slot='sidebar'][data-collapsible='icon'] [data-slot='sidebar-container'] {
+    width: var(--sidebar-width-icon);
+  }
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
